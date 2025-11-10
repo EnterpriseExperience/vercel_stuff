@@ -7,9 +7,7 @@ export default async function handler(req, res) {
 
   let connected = (await get("connections")) || {};
 
-  if (user) {
-    connected[user] = now;
-  }
+  if (user) connected[user] = now;
 
   for (const [u, t] of Object.entries(connected)) {
     if (now - t > timeout) delete connected[u];
