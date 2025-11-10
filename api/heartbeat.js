@@ -16,7 +16,6 @@ export default async function handler(req) {
     connected[user] = now;
   }
 
-  // Clean up timed-out connections
   for (const [u, t] of Object.entries(connected)) {
     if (now - t > timeout) {
       delete connected[u];
