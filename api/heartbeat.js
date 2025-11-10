@@ -1,12 +1,7 @@
 import { get, set } from "@vercel/edge-config";
 
-export const config = {
-  runtime: "edge",
-};
-
-export default async function handler(req) {
-  const { searchParams } = new URL(req.url);
-  const user = searchParams.get("user");
+export default async function handler(req, res) {
+  const user = req.query.user;
   const timeout = 5000;
   const now = Date.now();
 
@@ -17,18 +12,10 @@ export default async function handler(req) {
   }
 
   for (const [u, t] of Object.entries(connected)) {
-    if (now - t > timeout) {
-      delete connected[u];
-    }
+    if (now - t > timeout) delete connected[u];
   }
 
   await set("connections", connected);
 
-  return new Response(
-    JSON.stringify({ connected: Object.keys(connected) }),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  res.status(200).json({ connected: Object.keys(connected) });
 }
